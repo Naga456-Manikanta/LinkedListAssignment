@@ -1,0 +1,1 @@
+Looking at the graph the emperical reesults show that time is linear in the case of array.
