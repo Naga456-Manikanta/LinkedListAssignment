@@ -11,156 +11,110 @@ listOfRandomNumbers = generateRandomNumbers(10,100)
 
 #Here the theoratical complexity of generating the list is O(n).
 
-#defining class for a node in a linkedlist. Since this is doubly linked list each node will have a value, a previous node and next node
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.prev = None
-        self.next = None
-#defining class for creating a doubly linked list since this is a doubly linked list it will have a head and tail properties, which are bacially nodes
-class DoublyLinkedList:
+class DynamicArray:
     def __init__(self):
-        self.head = None
-        self.tail = None
+        self.array = []
 
-    #to insert an element in doubly linked list we first check if it is the first node
-    #if it is first node i.e. no other node exists then that node becomes both head and tail
-    #else we link the node by setting the prev and next elements of the nodes properly.
-    def insert(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-            self.tail = new_node
+    def get(self, index):
+        if 0 <= index < len(self.array):
+            return self.array[index]
         else:
-            new_node.prev = self.tail
-            self.tail.next = new_node
-            self.tail = new_node
+            raise IndexError("Index out of bounds")
 
-    #code to parse throught the linked list and print it
-    def display(self):
-        current = self.head
-        while current:
-            print(current.data, end=" <-> ")
-            current = current.next
-        print("None")
+    def set(self, index, value):
+        if 0 <= index < len(self.array):
+            self.array[index] = value
+        else:
+            raise IndexError("Index out of bounds")
 
-    #function to count number of elements greater than certain value in the given linked list.
+    def insert(self, value):
+        self.array.append(value)
+
     def count_greater_than(self, value):
         count = 0
-        current = self.head
-        while current:
-            if current.data > value:
+        for item in self.array:
+            if item is not None and item > value:
                 count += 1
-            current = current.next
         return count
-    #We would use a sort of bubble sort alogrithm for sorting the items in the linked list
-    #this basically swaps the items in the list until the items are at right place according the the required order.
+
     def bubble_sort(self, ascending=True):
-        if not self.head:
-            return
-
-        swapped = True
-        while swapped:
-            swapped = False
-            current = self.head
-
-            while current.next:
-                if (current.data > current.next.data and ascending) or (current.data < current.next.data and not ascending):
-                    # Swap the data of the current node and its next node
-                    current.data, current.next.data = current.next.data, current.data
-                    swapped = True
-                current = current.next
-    #while deleting index we have to check if this item is at the head.in that case we just have to replace the head. otherwise we have to remove it from link
-    def delete_at_index(self, index):
-        if index < 0:
-            return
-        current = self.head
-        count = 0
-        while current:
-            if count == index:
-                if current.prev:
-                    current.prev.next = current.next
-                else:
-                    self.head = current.next
-                if current.next:
-                    current.next.prev = current.prev
-                else:
-                    self.tail = current.prev
-                return
-            current = current.next
-            count += 1
-
-    #code to insert a node when the linked list is already sorted. We have to loop through the sorted list and check for the right position to insert.
-    def insert_with_sorting(self, data, ascending=True):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-            self.tail = new_node
+        if ascending:
+            self.array = [item for item in self.array if item is not None]
+            self.array.sort()
         else:
-            current = self.head
-            while current:
-                if (data <= current.data and ascending) or (data >= current.data and not ascending):
-                    new_node.next = current
-                    new_node.prev = current.prev
-                    if current.prev:
-                        current.prev.next = new_node
-                    else:
-                        self.head = new_node
-                    current.prev = new_node
-                    return
-                if not current.next:
-                    current.next = new_node
-                    new_node.prev = current
-                    self.tail = new_node
-                    return
-                current = current.next
+            self.array = [item for item in self.array if item is not None]
+            self.array.sort(reverse=True)
 
-# #testing the linked list
-# dll = DoublyLinkedList()
-# dll.insert(5)
-# dll.insert(2)
-# dll.insert(8)
-# dll.insert(1)
-# dll.insert(6)
-# dll.display()
-# dll.bubble_sort(ascending=True)
-# dll.display()
-# dll.bubble_sort(ascending=False)
-# dll.display()
-# dll.delete_at_index(2)
-# dll.display()
-# dll.insert_with_sorting(7,ascending=False)
-# dll.display()
+    def delete_at_index(self, index):
+        if 0 <= index < len(self.array):
+            del self.array[index]
+        else:
+            raise IndexError("Index out of bounds")
 
+    def insert_with_sorting(self, data, ascending=True):
+        if ascending:
+            index = 0
+            while index < len(self.array) and (self.array[index] is not None and self.array[index] < data):
+                index += 1
+        else:
+            index = 0
+            while index < len(self.array) and (self.array[index] is not None and self.array[index] > data):
+                index += 1
+        self.array.insert(index, data)
+
+    def display(self):
+        print(self.array)
+
+# Example usage:
+# dynamic_array = DynamicArray()
+
+# dynamic_array.insert(5)
+# dynamic_array.insert(2)
+# dynamic_array.insert(8)
+# dynamic_array.insert(1)
+# dynamic_array.insert(6)
+
+# dynamic_array.display()  # Output: [5, 2, 8, 1, 6]
+
+# print(dynamic_array.count_greater_than(3))  # Output: 3
+
+# dynamic_array.bubble_sort(ascending=False)
+# dynamic_array.display()  # Output: [8, 6, 5, 2, 1]
+
+# dynamic_array.delete_at_index(2)
+# dynamic_array.display()  # Output: [8, 6, 2, 1]
+
+# dynamic_array.insert(4)
+# dynamic_array.display()  # Output: [8, 6, 2, 1, 4]
 #testing random number insertion
-# mainLL = DoublyLinkedList()
+# mainarray = DynamicArray()
 # for number in listOfRandomNumbers:
-#   mainLL.insert(number)
-# mainLL.display()
-# mainLL.bubble_sort(ascending=False)
-# mainLL.display()
+#   mainarray.insert(number)
+# mainarray.display()
+# mainarray.bubble_sort(ascending=False)
+# mainarray.display()
 
-def linkedListCompleteTest(n,m):
+def arrayCompleteTest(n,m):
   listOfRandomNumbers=generateRandomNumbers(n,m)
   #print(listOfRandomNumbers)
-  ll = DoublyLinkedList()
+  arr = DynamicArray()
   for number in listOfRandomNumbers:
-    ll.insert(number)
-  #ll.display()
-  greaterthan50 = ll.count_greater_than(50)
+    arr.insert(number)
+  #arr.display()
+  greaterthan50 = arr.count_greater_than(50)
   #print(greaterthan50)
-  ll.bubble_sort(ascending=False)
-  #ll.display()
+  arr.bubble_sort(ascending=False)
+  #arr.display()
   if greaterthan50 > 5:
-    ll.delete_at_index(4)
-    #ll.display()
+    arr.delete_at_index(4)
+    #arr.display()
   else:
-    ll.delete_at_index(1)
-    #ll.display()
-  ll.insert_with_sorting(10,ascending=False)
-  #ll.display()
+    arr.delete_at_index(1)
+    #arr.display()
+  arr.insert_with_sorting(10,ascending=False)
+  #arr.display()
 
-linkedListCompleteTest(10,100)
+arrayCompleteTest(10,100)
 
 #to empirically measure the time and space complexity of the the given test code we would define a follwing block
 import time
@@ -177,25 +131,27 @@ def measure_time(func, n):
 
 # Create a list to store values of n
 n_values = [10,50,100,500,1000,5000,10000]
-execution_times = []
+execution_times_dynamic_array = []
 
 # Measuring the time for different values of n
 for n in n_values:
-    execution_time = measure_time(linkedListCompleteTest, n)
-    execution_times.append(execution_time)
+    execution_time = measure_time(arrayCompleteTest, n)
+    execution_times_dynamic_array.append(execution_time)
 
 # Plot the measured times against the values of n
-plt.plot(n_values, execution_times, marker='o')
+plt.plot(n_values, execution_times_dynamic_array, marker='o')
 plt.xlabel('n')
 plt.ylabel('Execution Time (seconds)')
 plt.title('Execution Time vs. n (m = 10n)')
 plt.grid(True)
 plt.show()
 
+
+
 import csv
-time_dict = dict(zip(n_values, execution_times))
+time_dict = dict(zip(n_values, execution_times_dynamic_array))
 print(time_dict)
-csv_filename = "execution_times_linked_list.csv"
+csv_filename = "execution_times_dynamic_array.csv"
 with open(csv_filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['n', 'execution_time'])  # Write header row
